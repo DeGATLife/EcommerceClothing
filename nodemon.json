@@ -1,0 +1,14 @@
+{
+    "env" :{
+       
+        
+        "PORT" : 4000,
+        "SECRET_KEY" : "mawkli",
+        "EMAIL":"lampmohammed07@gmail.com",
+        "PASSWORD" : "hamade1998gha",
+        
+        "FILE_UPLOAD_PATH":"./public/uploads/images/users/",
+        "MAX_FILE_UPLOAD":500000
+
+    }
+}
