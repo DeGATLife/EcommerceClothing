@@ -1,12 +1,13 @@
 const sql = require("./../DB/db");
 //user object constructor
-var Student =function(student){
-    
-    this.users_id=student.users_id
+var Course_collection =function(collection){ 
+    this.formations_id=collection.formations_id,
+    this.namefc_fr=collection.namefc_fr,
+    this.namefc_eng=collection.namefc_eng
 }
 //create user function
-Student.AddStudent = function (newStudent,result){
-    sql.query("INSERT INTO students set ?",newStudent,function(err,res){
+Course_collection.AddCourse_collection = function (newCourse_collection,result){
+    sql.query("INSERT INTO course_collections set ?",newCourse_collection,function(err,res){
         if(err){
             console.log("error :",err);
             result(err,null);
@@ -16,8 +17,8 @@ Student.AddStudent = function (newStudent,result){
         }
     });
 };
- Student.findOneByuserID = function (userID, result) {
-    sql.query("Select * from students where users_id = ? ", userID, function (err, res) {             
+ Course_collection.findOneByID = function (userID, result) {
+    sql.query("Select c.namefc_eng ,f.namef_eng From course_collections c INNER JOIN formations f ON (f.id = c.formations_id) AND (formations_id = ?);", userID, function (err, res) {             
             if(err) {
                 console.log("error: ", err);
                 result(err, null);
@@ -29,16 +30,16 @@ Student.AddStudent = function (newStudent,result){
             }
         });   
 };
-Student.getAllStudents = function (result) {
-    sql.query("Select u.username,u.fullname,u.email,u.image,u.address,u.tel,u.isVerified From users u INNER JOIN students s ON (u.id = s.users_id);"
-    , function (err, res) {
+Course_collection.getAllCourse_collections = function (formationID,result) {
+    sql.query("Select c.namefc_fr,f.namef_fr From course_collections c INNER JOIN formations f ON (f.id = c.formations_id) AND (formations_id = ?);"
+   ,formationID, function (err, res) {
 
             if(err) {
                 console.log("error: ", err);
                 result(err,null);
             }
             else{
-              console.log('users : ', res);  
+              console.log('Collection : ', res);  
 
              result(null, res);
             }
@@ -56,4 +57,4 @@ Student.getAllStudents = function (result) {
 //             }
 //         });   
 // };
-module.exports= Student;
+module.exports= Course_collection;

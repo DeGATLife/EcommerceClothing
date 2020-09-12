@@ -26,3 +26,9 @@ app.listen(port, () => {
   useRoutes(app);
   var studentRoutes = require('./Routes/Student.Routes'); //importing route
   studentRoutes(app);
+  var adminRoutes = require('./Routes/Admin.Routes'); //importing route
+  adminRoutes(app);
+  var formationRoutes = require('./Routes/Formation.Routes'); //importing route
+  formationRoutes(app);
+  var courseRoutes = require('./Routes/Course.Routes'); //importing route
+  courseRoutes(app);

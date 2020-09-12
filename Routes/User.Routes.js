@@ -1,15 +1,16 @@
 module.exports = function(app) {
     //   const router = express.Router()
        var userRoute = require("../Controllers/User.Controller");
-       
+       var Auth =require('../Middlewares/Auth.Middleware');
        // User Routes
-       app.route('/Users/Store/User').post(userRoute.Create_a_User);
+       app.route('/Users/Store/User').post(Auth.registerPoliceman,userRoute.Create_a_User);
        app.route('/Confirmation/:token').get(userRoute.confirmeToken);
     //    app.route('/Users/Update/Picture').put(auth.auth,userRoute.Update_User_Pic);
     //    app.route('/Users/Update/Email').put(auth.auth,userRoute.Update_User_Email);
     //    app.route('/Users/Update/Address').put(auth.auth,userRoute.Update_User_Address);
     //    app.route('/Users/Update/Password').put(auth.auth,userRoute.Update_User_Password);
-    //    app.route('/Users/Get/Login').post(auth.UserLogin,userRoute.Users_Login);
+         app.route('/Users/Get/Login').post(Auth.loginPoliceman,userRoute.Login);
+         app.route('/Users/Get/GoogleLogin').post(userRoute.Firebase_Login);
     //    app.route('/Users/Update/RestPassPho').post(userRoute.Rest_Password_By_Phone);
     //    app.route('/Users/Update/RestCode').post(userRoute.verify_Code);
     //    app.route('/Users/Store/RestPass').post(userRoute.Reset_Password);

@@ -4,6 +4,9 @@ const Token =require('./../Models/Token');
 const bcrypt=require('bcrypt');
 const crypto=require('crypto');
 const nodemailer=require('nodemailer');
+const Student = require('../Models/Student');
+const Instructor = require('../Models/Instructor');
+const Admin = require('../Models/Admin');
 exports.Create_a_User =function(req,res){
    
     const NewUser =new User(req.body);    
@@ -30,17 +33,71 @@ exports.Create_a_User =function(req,res){
             })
         });         
 }
+exports.Firebase_Login = function(req,res){
+  const NewUser =new User(req.body);   
+ User.getUserByEmail(NewUser.email,function(err,response){
+   if(err)
+   res.status(503).send(err);
+   if(response[0]!=''){
+    let token= jwt.sign({id: response[0].id , role: 'User'},process.env.SECRET_KEY,{
+      expiresIn: 1440
+       })
+   res.json({token: token})
+   }else{
+     NewUser.isVerified=true;
+    User.CreateUser(NewUser,function(err,resp){
+      if(err)
+      res.status(503).send(err)
+      User.getUserByEmail(NewUser.email,function(err,user){
+        if(err)
+        res.status(503).send(err)
+        let token= jwt.sign({id: user[0].id , role: 'Student'},process.env.SECRET_KEY,{
+          expiresIn: 1440
+           })
+       res.json({token: token})
+      })
+    }) 
+   }
+ }) 
+}
 exports.Login =function(req,res){
   
   const email = req.body.email;
+  const password = req.body.password;
      User.getUserByEmail(email,function(err,user){
      if(err)
       res.send(err)
-      let token= jwt.sign({id: user[0].id},process.env.SECRET_KEY,{
+      if(bcrypt.compareSync(password,user[0].password)){ 
+      Admin.findOneByuserID(user[0].id,function(err,admin){
+        if(err)
+        res.status(500).send(err.message)
+        if(admin != ''){
+          let token= jwt.sign({id: user[0].id , role: 'Admin'},process.env.SECRET_KEY,{
+            expiresIn: 1440
+             })
+         res.json({token: token})
+        }else{
+          Instructor.findOneByuserID(user[0].id,function(err,instructor){
+            if(err)
+            res.status(500).send(err.message)
+            if(instructor != ''){
+              let token= jwt.sign({id: user[0].id , role: 'Instructor'},process.env.SECRET_KEY,{
+                expiresIn: 1440
+                 })
+             res.json({token: token})
+           }else{
+            let token= jwt.sign({id: user[0].id , role: 'Student'},process.env.SECRET_KEY,{
               expiresIn: 1440
                })
            res.json({token: token})
-    
+           }
+           })
+        }
+          
+      })
+    }else{
+      res.status(500).send({error:"wrong password"});
+    }   
   });
 }
 exports.User_Profile = function(req,res){

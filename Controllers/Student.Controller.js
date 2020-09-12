@@ -46,3 +46,32 @@ function attach(userID){
    })
 
 }
+exports.Firebase_Login = function(req,res){
+    const NewUser =new User(req.body);   
+   User.getUserByEmail(NewUser.email,function(err,response){
+     if(err)
+     res.status(503).send(err);
+     if(response[0]!=''){
+      let token= jwt.sign({id: response[0].id , role: 'Student'},process.env.SECRET_KEY,{
+        expiresIn: 1440
+         })
+     res.json({token: token})
+     }else{
+       NewUser.isVerified=true;
+      User.CreateUser(NewUser,function(err,resp){
+        if(err)
+        res.status(503).send(err)
+        User.getUserByEmail(NewUser.email,function(err,user){
+          if(err)
+          res.status(503).send(err)
+          const nu = attach(user[0].id);
+          let token= jwt.sign({id: user[0].id , role: 'Student'},process.env.SECRET_KEY,{
+            expiresIn: 1440
+             })
+         res.json({token: token})
+        })
+      }) 
+     }
+   }) 
+  }
+  

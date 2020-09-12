@@ -67,7 +67,7 @@ User.getAllUser = function (result) {
 
             if(err) {
                 console.log("error: ", err);
-                result(null, err);
+                result(err,null);
             }
             else{
               console.log('users : ', res);  
@@ -98,6 +98,17 @@ User.Verify = function(id,verify, result){
                 }
             }); 
     };
+ User.Banne = function(id,banne, result){
+        sql.query("UPDATE users SET isVerified = ? WHERE id = ?", [banne, id], function (err, res) {
+              if(err) {
+                  console.log("error: ", err);
+                    result(err, null);
+                 }
+               else{   
+                 result(null, res);
+                    }
+                }); 
+        };
 User.updateEmail = function(id, Email, result){
     sql.query("UPDATE users SET email = ? WHERE id = ?", [Email, id], function (err, res) {
           if(err) {
